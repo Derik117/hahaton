@@ -13,3 +13,4 @@ from .service_organization import ServiceOrganization
 from .service_class import ServiceClass
 from .service import Service
 from .event import Event
+from .preds_stat import PredictionCounter
