@@ -31,7 +31,17 @@
               v-list-item-subtitle.text-left(v-if="e.address") ({{e.address}})
       v-col(cols=4)
         div.text-h2 Кружки
-    //- span {{r.books ? r.books[0] : null }}
+        v-card(v-for="e in r.services")
+          v-list-item(three-line)
+            v-list-item-content
+              div.text-h6 
+                span {{e.service_name || e.service_class_name}} 
+              v-list-item-title {{e.schedule_type}}, {{e.finance_type}}
+                span(v-if="e.duration") , {{parseInt(e.duration)}} {{e.duration_unit}}
+              span.text-left {{e.organization_name}}
+              span.text-left {{e.organization_street_name}}
+              v-list-item-subtitle.text-left(v-if="e.organization_underground_name") Метро {{e.organization_underground_name}}
+              
 </template>
 
 <script lang="ts">
