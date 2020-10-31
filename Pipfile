@@ -10,6 +10,7 @@ django = "==3.1.2"
 pandas = "*"
 psycopg2-binary = "*"
 gunicorn = "*"
+pytelegrambotapi = "*"
 
 [requires]
 python_version = "3.8"
