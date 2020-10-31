@@ -11,3 +11,4 @@ class Catalog(models.Model):
     tags = models.TextField(null=True)
     article = models.TextField(null=True)
     age_rating = models.TextField(null=True)
+    cover_url = models.TextField(null=True)
