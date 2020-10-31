@@ -3,3 +3,10 @@ from .catalog import Catalog
 from .condition import Condition
 from .reader import Reader
 from .book_copy import BookCopy
+from .service_user import ServiceUser
+from .service_request import ServiceRequest
+from .service_request import ServiceRequest
+from .service_relation import ServiceRelation
+from .service_organization import ServiceOrganization
+from .service_class import ServiceClass
+from .service import Service
