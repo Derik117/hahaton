@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Home from '@/views/Home.vue'
-import Login from '@/views/Login.vue'
+import Doc from '@/views/Doc.vue'
 import NotFound from '@/views/NotFound.vue'
 import store from '@/store'
 
@@ -16,9 +16,9 @@ const router = new Router({
       component: Home,
     },
     {
-      path: '/login',
-      name: 'login',
-      component: Login,
+      path: '/docs/',
+      name: 'docs',
+      component: Doc,
     },
     {
       path: '*',

@@ -42,7 +42,7 @@ class BookSerializer(serializers.ModelSerializer):
 class EventSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Event
-        fields = ('id', 'name', 'status', 'start_date', 'end_date', 'description', 'address', 'age_limit', 'age_group')
+        fields = ('id', 'name', 'start_date', 'end_date', 'description', 'address', 'age_limit', 'age_group')
 
 
 class ServiceSerializer(serializers.ModelSerializer):

@@ -1,3 +1,4 @@
+import os
 from typing import Dict, List
 import pandas as pd
 from data import models
@@ -7,6 +8,23 @@ import numpy as np
 
 ratings = None
 m = None
+
+
+def load_ratings():
+    global ratings, m
+    if os.getenv('TEST'):
+        limit = 100000
+    else:
+        limit = 999999999
+    if ratings is None:
+        print('loading')
+        ratings = pd.DataFrame(models.MlRating.objects.values_list(named=True)[:limit])
+        m = csc_matrix(([1] * len(ratings), (ratings['reader_id'].astype(int).values,
+                                             ratings['doc_id'].astype(int).values)))
+        print('loading complete')
+
+
+load_ratings()
 
 
 def get_predicts(user_id: int) -> Dict[str, List[int]]:
@@ -28,13 +46,9 @@ def get_predicts(user_id: int) -> Dict[str, List[int]]:
 
 
 def get_top_books(reader_id, n_books=30):
-    global ratings, m
-    if ratings is None:
-        print('loading')
-        ratings = pd.DataFrame(models.MlRating.objects.values_list(named=True)[:100000])
-        m = csc_matrix(([1] * len(ratings), (ratings['reader_id'].astype(int).values,
-                                             ratings['doc_id'].astype(int).values)))
-        print('loading complete')
+    global m
+    if m is None:
+        load_ratings()
     dist = (1 - cosine_distances(m, m[reader_id])).reshape(-1, )
     w = np.array(list(zip(sorted(dist), np.argsort(dist)))[::-1][:100])[1:, 0]
     i = np.array(list(zip(sorted(dist), np.argsort(dist)))[::-1][:100])[1:, 1]

@@ -2,23 +2,15 @@
 nav
   v-app-bar(flat, app, dense)
     // Title
-    v-toolbar-title.text-uppercase.grey--text
+    v-toolbar-title.text-uppercase.grey--text.pr-4
       span {{ $t("title") }}
+    v-toolbar-items
+      v-btn(text, to="/") Главная
+      v-btn(text, :to="'/docs/'") Документация API
     v-spacer
     // Dark mode
     v-btn(text, icon, color='grey', @click='toggleMode')
       v-icon(small) brightness_2
-    // Language picker
-    v-menu(offset-y v-if="false")
-      template(v-slot:activator='{ on }')
-        v-btn(text, icon, color='grey', v-on='on') {{ currentLocale.icon }}
-      v-list
-        v-list-item(
-          v-for='locale in locales',
-          @click='changeLanguage(locale.code)',
-          :key='locale.code'
-        )
-          v-list-item-title {{ locale.icon }}
 </template>
 
 <script lang="ts">
