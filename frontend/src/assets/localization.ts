@@ -1,6 +1,6 @@
 export const messages = {
   en: {
-    title: 'NFL',
+    title: 'Рекомендательная система',
     notFound: 'Page not found',
   },
 }
