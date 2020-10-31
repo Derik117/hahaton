@@ -3,6 +3,7 @@ from .catalog import Catalog
 from .condition import Condition
 from .reader import Reader
 from .book_copy import BookCopy
+from .quote import Quote
 from .service_user import ServiceUser
 from .service_request import ServiceRequest
 from .service_relation import ServiceRelation
