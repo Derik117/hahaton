@@ -14,10 +14,10 @@ class PredictSerializer(serializers.ModelSerializer):
     def get_books(user: models.Reader):
         book_ids = get_predict.get_top_books(user.id)
         books = models.Catalog.objects.filter(id__in=book_ids)
-        return BookSerializer(books, many=True)
+        return BookSerializer(books, many=True).data
 
 
 class BookSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Catalog
-        fields = ('title', 'author', 'publisher')
+        fields = ('id', 'title', 'author', 'publisher', 'cover_url', 'year', 'age_rating')
