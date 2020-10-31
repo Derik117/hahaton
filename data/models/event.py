@@ -2,6 +2,7 @@ from django.db import models
 
 
 class Event(models.Model):
+    mosru_id = models.IntegerField()
     name = models.TextField()
     status = models.TextField()
     host_name = models.TextField()

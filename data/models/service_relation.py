@@ -3,7 +3,7 @@ from django.db import models
 
 class ServiceRelation(models.Model):
     status = models.FloatField(null=True)
-    service_user = models.ForeignKey('data.ServiceUser', on_delete=models.DO_NOTHING)
+    service_user = models.ForeignKey('data.ServiceUser', null=True, on_delete=models.DO_NOTHING)
     created_at = models.DateTimeField(null=True)
     organization = models.ForeignKey('data.ServiceOrganization', on_delete=models.DO_NOTHING)
     request = models.ForeignKey('data.ServiceRequest', null=True, on_delete=models.DO_NOTHING)
