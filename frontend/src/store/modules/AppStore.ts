@@ -5,6 +5,7 @@ import { VuexModule, Module, Mutation } from 'vuex-module-decorators'
 export default class AppStore extends VuexModule {
   user?: User = undefined
   language?: string = undefined
+  token?: string = undefined;
   dark = false
 
   @Mutation
@@ -20,5 +21,10 @@ export default class AppStore extends VuexModule {
   @Mutation
   setDark(dark: boolean) {
     this.dark = dark
+  }
+
+  @Mutation
+  setToken(token: string) {
+    this.token = token
   }
 }

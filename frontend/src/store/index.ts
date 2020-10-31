@@ -13,5 +13,6 @@ const store = new Vuex.Store({
   },
   plugins: [persistentState],
 })
-
+console.log(store)
 export default store
+export { AppStore, SnackbarStore }

@@ -1,10 +1,6 @@
 export const messages = {
-  ru: {
-    title: 'Темплейт фронтенда',
-    notFound: 'Страница не найдена',
-  },
   en: {
-    title: 'Frontend template',
+    title: 'NFL',
     notFound: 'Page not found',
   },
 }

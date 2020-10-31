@@ -1,28 +1,8 @@
 import axios from 'axios'
 import { User } from '@/models/User'
-
-const base = 'https://template.com'
-
-export async function loginFacebook(accessToken: string) {
-  return (
-    await axios.post(`${base}/login/facebook`, {
-      accessToken,
-    })
-  ).data as User
-}
-
-export async function loginGoogle(accessToken: string) {
-  return (
-    await axios.post(`${base}/login/google`, {
-      accessToken,
-    })
-  ).data as User
-}
-
-export async function loginTelegram(loginInfo: any) {
-  return (await axios.post(`${base}/login/telegram`, loginInfo)).data as User
-}
-
+import store from '@/store';
+const base = 'http://localhost:8000/api'
+console.log(base)
 export async function reset(user: User) {
   return (
     await axios.post(
@@ -35,10 +15,14 @@ export async function reset(user: User) {
   ).data
 }
 
+export async function login(username: string, password: string) {
+  return (await axios.post(
+    `${base}/auth/login/`,
+    {username: username, password: password}
+  )).data as User
+}
+
 function getHeaders(user: User) {
-  if (user.token) {
-    return { token: user.token }
-  } else {
-    return undefined
-  }
+  let headers = { headers: { Authorization: 'Bearer ' + (store as any).state.AppStore.token } }
+  return headers;
 }

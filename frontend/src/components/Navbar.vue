@@ -1,6 +1,6 @@
 <template lang="pug">
 nav
-  v-app-bar(flat, app)
+  v-app-bar(flat, app, dense)
     // Title
     v-toolbar-title.text-uppercase.grey--text
       span {{ $t("title") }}
@@ -9,7 +9,7 @@ nav
     v-btn(text, icon, color='grey', @click='toggleMode')
       v-icon(small) brightness_2
     // Language picker
-    v-menu(offset-y)
+    v-menu(offset-y v-if="false")
       template(v-slot:activator='{ on }')
         v-btn(text, icon, color='grey', v-on='on') {{ currentLocale.icon }}
       v-list
