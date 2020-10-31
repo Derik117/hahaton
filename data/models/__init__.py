@@ -10,3 +10,4 @@ from .service_relation import ServiceRelation
 from .service_organization import ServiceOrganization
 from .service_class import ServiceClass
 from .service import Service
+from .event import Event
