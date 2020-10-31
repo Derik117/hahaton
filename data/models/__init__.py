@@ -4,6 +4,7 @@ from .condition import Condition
 from .reader import Reader
 from .book_copy import BookCopy
 from .ml_book import MlBook
+from .ml_rating import MlRating
 from .quote import Quote
 from .service_user import ServiceUser
 from .service_request import ServiceRequest
