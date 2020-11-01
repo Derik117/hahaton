@@ -94,8 +94,12 @@ with open(os.path.join(BASE_DIR, 'ml', 'cosine_sim'), 'rb') as f:
     M_service = pickle.load(f)
 
 
-def get_top_services(age: float, n: int = 20):
+def get_top_services(age: int, n: int = 20):
     class_ids = []
+    if age > 90:
+        age = 90
+    elif age < 0:
+        age = 0
     new_user_id = df_pupil.loc[(df_pupil['возраст'] == age), ['id_ученика']].values.reshape(-1, )[0]
     dist = cosine_distances(M_service, M_service[new_user_id]).reshape(-1, )
     for classif in dist.argsort()[-200:][::-1]:
@@ -111,44 +115,7 @@ def get_top_services(age: float, n: int = 20):
         if x not in seen:
             uniq.append(x)
             seen.add(x)
-    return uniq[:n]
-    return [116143,
-            760923,
-            336649,
-            594380,
-            1035694,
-            1042251,
-            117337,
-            117338,
-            117542,
-            227527,
-            227531,
-            227530,
-            478627,
-            601744,
-            604520,
-            1011179,
-            1019105,
-            114900,
-            118053,
-            175309,
-            229429,
-            230286,
-            310361,
-            394149,
-            581794,
-            581836,
-            722637,
-            933924,
-            116621,
-            117786,
-            222969,
-            227131,
-            227244,
-            227247,
-            227296,
-            232643,
-            232807,
-            356151,
-            356868,
-            524600, ]
+    services = models.Service.objects.filter(created_at__gt='2020-01-01',
+                                             service_class_id__in=uniq).order_by('-created_at').values_list('id',
+                                                                                                            flat=True)
+    return services[:n]
