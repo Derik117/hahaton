@@ -130,6 +130,6 @@ def get_top_services(age: int, n: int = 20):
                                                                                                             'organization_id',
                                                                                                             'schedule_type',
                                                                                                             named=True).distinct()
-    service_ids = pd.DataFrame(services).drop_duplicates(['service_class_id', 'organization_id', 'schedule_type'])[
+    service_ids = pd.DataFrame(services).drop_duplicates(['service_class_id', 'organization_id',])[
         'id'].values
     return service_ids[:n]
