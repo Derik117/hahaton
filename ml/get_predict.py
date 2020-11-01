@@ -11,10 +11,12 @@ from hahaton.settings import BASE_DIR
 
 ratings = None
 m = None
+id_to_book = None
+reader_to_id = None
 
 
 def load_ratings():
-    global ratings, m
+    global ratings, m, id_to_book, reader_to_id
     if os.getenv('TEST'):
         limit = 100000
     else:
@@ -22,8 +24,16 @@ def load_ratings():
     if ratings is None:
         print('loading')
         ratings = pd.DataFrame(models.MlRating.objects.values_list(named=True)[:limit])
-        m = csc_matrix(([1] * len(ratings), (ratings['reader_id'].astype(int).values,
-                                             ratings['doc_id'].astype(int).values)))
+        ratings['count'] = 1
+        ratings = ratings.groupby(['reader_id', 'doc_id'])['count'].count().reset_index().sort_values('count', ascending=False)
+
+        book_to_id  = {y: x for x, y in enumerate(ratings['doc_id'].sort_values().unique())}
+        id_to_book = {y: x for x, y in book_to_id.items()}
+        reader_to_id  = {y: x for x, y in enumerate(ratings['reader_id'].sort_values().unique())}
+        ratings['doc_id'] = ratings['doc_id'].map(book_to_id)
+        ratings['reader_id'] = ratings['reader_id'].map(reader_to_id)
+        m = csc_matrix((ratings['count'], (ratings['reader_id'].astype(int).values, 
+                                   ratings['doc_id'].astype(int).values)))
         print('loading complete')
 
 
@@ -52,11 +62,13 @@ def get_top_books(reader_id, n_books=30):
     global m
     if m is None:
         load_ratings()
-    dist = (1 - cosine_distances(m, m[reader_id])).reshape(-1, )
-    w = np.array(list(zip(sorted(dist), np.argsort(dist)))[::-1][:100])[1:, 0]
-    i = np.array(list(zip(sorted(dist), np.argsort(dist)))[::-1][:100])[1:, 1]
+    dist = (1 - cosine_distances(m, m[reader_to_id[reader_id]])).reshape(-1, )
+    w = np.array(list(zip(sorted(dist), np.argsort(dist)))[::-1][:1000])[1:, 0]
+    i = np.array(list(zip(sorted(dist), np.argsort(dist)))[::-1][:1000])[1:, 1]
     m2 = m[i].toarray()
-    return np.argsort((m2.T * w).T.sum(axis=0))[::-1][:n_books]
+    recomended_idxs = [id_to_book[x] for x in np.argsort((m2.T * w).T.sum(axis=0))[::-1][:n_books+1000] if 
+                       x not in ratings[ratings.reader_id == reader_to_id[reader_id]]['doc_id'].values]
+    return np.array(recomended_idxs[:n_books])
 
 
 def get_top_events(user_id: int):
