@@ -1,10 +1,13 @@
 import os
+import pickle
 from typing import Dict, List
 import pandas as pd
 from data import models
 from scipy.sparse import csc_matrix
 from sklearn.metrics.pairwise import cosine_distances
 import numpy as np
+
+from hahaton.settings import BASE_DIR
 
 ratings = None
 m = None
@@ -84,7 +87,31 @@ def get_top_events(user_id: int):
             ]
 
 
-def get_top_services(user_id: int):
+service_df = pd.read_csv(os.path.join(BASE_DIR, 'ml', 'service_df.csv'))
+df_pupil = pd.DataFrame(models.ServiceUser.objects.values_list(named=True)).rename(columns={'id': 'id_ученика',
+                                                                                            'age': 'возраст'})
+with open(os.path.join(BASE_DIR, 'ml', 'cosine_sim'), 'rb') as f:
+    M_service = pickle.load(f)
+
+
+def get_top_services(age: float, n: int = 20):
+    class_ids = []
+    new_user_id = df_pupil.loc[(df_pupil['возраст'] == age), ['id_ученика']].values.reshape(-1, )[0]
+    dist = cosine_distances(M_service, M_service[new_user_id]).reshape(-1, )
+    for classif in dist.argsort()[-200:][::-1]:
+        try:
+            class_ids.append(service_df.loc[service_df['id_ученика'] == classif, 'Классификатор_услуги'].values[0])
+        except:
+            continue
+    seen = set()
+    seen.add(3003269)
+    seen.add(3220710)
+    uniq = []
+    for x in class_ids:
+        if x not in seen:
+            uniq.append(x)
+            seen.add(x)
+    return uniq[:n]
     return [116143,
             760923,
             336649,

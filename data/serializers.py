@@ -26,7 +26,7 @@ class PredictSerializer(serializers.ModelSerializer):
 
     @staticmethod
     def get_services(user: models.Reader):
-        service_ids = get_predict.get_top_services(user.id if user else None)
+        service_ids = get_predict.get_top_services(user.age if user else 34)
         services = models.Service.objects.filter(id__in=service_ids).prefetch_related(
             'organization', 'service_class'
         )
