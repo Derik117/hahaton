@@ -13,6 +13,6 @@ class GetPredict(generics.CreateAPIView):
 
     def post(self, request, *args, **kwargs):
         user_id = request.data['user_id']
-        u = models.Reader.objects.get(id=user_id) if user_id else None
+        u = models.Reader.objects.get(id=user_id) if user_id else models.Reader.objects.get(pk=235264)
         s = self.serializer_class(u)
         return Response(s.data)
