@@ -8,7 +8,7 @@ let SnackbarStore = getModule(_SnackbarStore, store)
 import { API_URI } from "@/main"
 const instance = axios.create({
   baseURL: API_URI,
-  timeout: 15000,
+  timeout: 30000,
   headers: {
     'Accept': 'application/json',
     'Content-type': 'application/json',
