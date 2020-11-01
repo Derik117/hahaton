@@ -62,13 +62,11 @@ def get_top_books(reader_id, n_books=30):
     global m
     if m is None:
         load_ratings()
-    dist = (1 - cosine_distances(m, m[reader_to_id[reader_id]])).reshape(-1, )
-    w = np.array(list(zip(sorted(dist), np.argsort(dist)))[::-1][:1000])[1:, 0]
-    i = np.array(list(zip(sorted(dist), np.argsort(dist)))[::-1][:1000])[1:, 1]
+    dist = (1 - cosine_distances(m, m[reader_id])).reshape(-1, )
+    w = np.array(list(zip(sorted(dist), np.argsort(dist)))[::-1][:100])[1:, 0]
+    i = np.array(list(zip(sorted(dist), np.argsort(dist)))[::-1][:100])[1:, 1]
     m2 = m[i].toarray()
-    recomended_idxs = [id_to_book[x] for x in np.argsort((m2.T * w).T.sum(axis=0))[::-1][:n_books+1000] if 
-                       x not in ratings[ratings.reader_id == reader_to_id[reader_id]]['doc_id'].values]
-    return np.array(recomended_idxs[:n_books])
+    return np.argsort((m2.T * w).T.sum(axis=0))[::-1][:n_books]
 
 
 def get_top_events(user_id: int):
@@ -114,11 +112,15 @@ def get_top_services(age: int, n: int = 20):
         age = 0
     new_user_id = df_pupil.loc[(df_pupil['возраст'] == age), ['id_ученика']].values.reshape(-1, )[0]
     dist = cosine_distances(M_service, M_service[new_user_id]).reshape(-1, )
-    for classif in dist.argsort()[-200:][::-1]:
-        try:
-            class_ids.append(service_df.loc[service_df['id_ученика'] == classif, 'Классификатор_услуги'].values[0])
-        except:
-            continue
+    dist_idx = dist.argsort()
+    for classif in dist_idx:
+        if len(np.unique(class_ids)) < n:
+            try:
+                class_ids.append(service_df.loc[service_df['id_ученика'] == classif, 'Классификатор_услуги'].values[0])
+            except:
+                continue
+        else:
+            break
     seen = set()
     seen.add(3003269)
     seen.add(3220710)
