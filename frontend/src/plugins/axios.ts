@@ -18,9 +18,8 @@ instance.interceptors.response.use((r: any) => {
   return r
 }, (err: any) => {
   console.log(API_URI)
-  SnackbarStore.setSnackbarError(
-    err.toString()
-  );
+  let errText = err?.data?.error || err.toString()
+  SnackbarStore.setSnackbarError(errText);
   return Promise.reject(err);
 })
 Vue.use(VueAxios, instance);

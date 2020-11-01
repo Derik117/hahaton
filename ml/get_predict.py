@@ -128,7 +128,7 @@ def get_top_services(age: int, n: int = 20):
     uniq = []
     for x in class_ids:
         if x not in seen:
-            uniq.append(x)  # ['Классификатор_услуги', 'id_организации', 'Тип_расписания']
+            uniq.append(x)
             seen.add(x)
     services = models.Service.objects.filter(created_at__gt='2016-01-01',
                                              service_class_id__in=uniq).order_by('-created_at').values_list('id',
