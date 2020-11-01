@@ -12,7 +12,7 @@ class GetPredict(generics.CreateAPIView):
         return
 
     def post(self, request, *args, **kwargs):
-        user_id = request.data['user_id']
+        user_id = request.data.get('user_id')
         try:
             u = models.Reader.objects.get(id=user_id) if user_id else models.Reader.objects.get(pk=42880)
         except models.Reader.DoesNotExist:
