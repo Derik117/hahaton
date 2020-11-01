@@ -130,7 +130,7 @@ def get_book(message):
                         if book_id not in books_with_quotes:
                             books_with_quotes.append(book_id)
                             break
-            text = ""
+            text = "Чтобы мы подобрали для вас интересную книгу, выберите номер наиболее привлекательной цитаты из списка:"
             for num, book in enumerate(books_with_quotes):
                 max_rate = Quote.objects.all().filter(book_id=book).aggregate(Max('rating'))['rating__max']
                 quote = Quote.objects.filter(book_id=book, rating=max_rate).first().text
