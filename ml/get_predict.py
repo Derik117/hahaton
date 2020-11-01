@@ -25,15 +25,16 @@ def load_ratings():
         print('loading')
         ratings = pd.DataFrame(models.MlRating.objects.values_list(named=True)[:limit])
         ratings['count'] = 1
-        ratings = ratings.groupby(['reader_id', 'doc_id'])['count'].count().reset_index().sort_values('count', ascending=False)
+        ratings = ratings.groupby(['reader_id', 'doc_id'])['count'].count().reset_index().sort_values('count',
+                                                                                                      ascending=False)
 
-        book_to_id  = {y: x for x, y in enumerate(ratings['doc_id'].sort_values().unique())}
+        book_to_id = {y: x for x, y in enumerate(ratings['doc_id'].sort_values().unique())}
         id_to_book = {y: x for x, y in book_to_id.items()}
-        reader_to_id  = {y: x for x, y in enumerate(ratings['reader_id'].sort_values().unique())}
+        reader_to_id = {y: x for x, y in enumerate(ratings['reader_id'].sort_values().unique())}
         ratings['doc_id'] = ratings['doc_id'].map(book_to_id)
         ratings['reader_id'] = ratings['reader_id'].map(reader_to_id)
-        m = csc_matrix((ratings['count'], (ratings['reader_id'].astype(int).values, 
-                                   ratings['doc_id'].astype(int).values)))
+        m = csc_matrix((ratings['count'], (ratings['reader_id'].astype(int).values,
+                                           ratings['doc_id'].astype(int).values)))
         print('loading complete')
 
 
@@ -127,9 +128,14 @@ def get_top_services(age: int, n: int = 20):
     uniq = []
     for x in class_ids:
         if x not in seen:
-            uniq.append(x)
+            uniq.append(x)  # ['Классификатор_услуги', 'id_организации', 'Тип_расписания']
             seen.add(x)
-    services = models.Service.objects.filter(created_at__gt='2020-01-01',
+    services = models.Service.objects.filter(created_at__gt='2016-01-01',
                                              service_class_id__in=uniq).order_by('-created_at').values_list('id',
-                                                                                                            flat=True)
-    return services[:n]
+                                                                                                            'service_class_id',
+                                                                                                            'organization_id',
+                                                                                                            'schedule_type',
+                                                                                                            named=True).distinct()
+    service_ids = pd.DataFrame(services).drop_duplicates(['service_class_id', 'organization_id', 'schedule_type'])[
+        'id'].values
+    return service_ids[:n]
