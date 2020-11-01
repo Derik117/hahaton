@@ -68,7 +68,12 @@ export default class Home extends Vue {
   getPred() {
     this.loading = true
     return axios.post('/api/get_preds/', {user_id: this.userId}).then(r => {
-      this.r = r.data
+      if (r.data.books) {
+        this.r = r.data
+      } else {
+        this.setSnackbarError('Something wrong. Empty response')
+        console.log(r)
+      }
     }).catch(err => {
 
     }).finally(() => {
