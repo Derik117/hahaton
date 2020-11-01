@@ -19,23 +19,24 @@ def get_predicts_age(age: int, n: int) -> List[int]:
     class_ids = []
     with open('cosine_sim', 'rb') as f:
         M = pickle.load(f)
-#     age = df_pupil.loc[df_pupil['id_ученика'] == user_id, 'возраст'].values[0]
     new_user_id = df_pupil.loc[(df_pupil['возраст'] == age), ['id_ученика']].values.reshape(-1, )[0]
     dist = cosine_distances(M, M[new_user_id]).reshape(-1, )
-    for classif in dist.argsort()[-200:][::-1]:
-        try:
-            class_ids.append(df.loc[df['id_ученика'] == classif, 'Классификатор_услуги'].values[0])
-        except:
-            continue
+    dist_idx = dist.argsort()
+    for classif in dist_idx:
+        if len(np.unique(class_ids)) < n:
+            try:
+                class_ids.append(df.loc[df['id_ученика'] == classif, 'Классификатор_услуги'].values[0])
+            except:
+                continue
+        else:
+            break
     seen = set()
-    seen.add(3003269)
-    seen.add(3220710)
     uniq = []
     for x in class_ids:
         if x not in seen:
             uniq.append(x)
             seen.add(x)
-    return uniq[:n]
+    return uniq
 
 def get_predicts(user_id: int, n: int) -> List[int]:
     class_ids = []
@@ -45,26 +46,30 @@ def get_predicts(user_id: int, n: int) -> List[int]:
     if user_id in df_relation['id_ученика'].values:
         dist = cosine_distances(M, M[user_id]).reshape(-1, )
     else:
-#         age = df_pupil.loc[df_pupil['id_ученика'] == user_id, 'возраст'].values[0]
         new_user_id = df_pupil.loc[(df_pupil['возраст'] == age), ['id_ученика']].values.reshape(-1, )[0]
         dist = cosine_distances(M, M[new_user_id]).reshape(-1, )
-    for classif in dist.argsort()[-200:][::-1]:
-        try:
-            class_ids.append(df.loc[df['id_ученика'] == classif, 'Классификатор_услуги'].values[0])
-        except:
-            continue
+    dist_idx = dist.argsort()
+    for classif in dist_idx:
+        if len(np.unique(class_ids)) < n:
+            try:
+                class_ids.append(df.loc[df['id_ученика'] == classif, 'Классификатор_услуги'].values[0])
+            except:
+                continue
+        else:
+            break
     seen = set()
-    seen.add(3003269)
-    seen.add(3220710)
     uniq = []
     for x in class_ids:
         if x not in seen:
             uniq.append(x)
             seen.add(x)
-    return uniq[:n]
+    return uniq
 
 def get_krugki(ids: List[int]) -> List[int]:
     kr = []
+    df_services_ = df_services.copy()
+    df_services_ = df_services_.loc[~df_services_.duplicated(['Классификатор_услуги', 'id_организации', 'Тип_расписания']), :]
+    df_services_ = df_services_.sort_values('Дата_создания', ascending=False)
     for i in ids:
-        kr.append(df_services.loc[(df_services['Дата_создания'] > '2020-01-01') & (df_services['Классификатор_услуги'] == i), 'id_услуги'].values.reshape(-1, )[0])
+        kr.append(df_services_.loc[(df_services_['Дата_создания'] > '2016-01-01') & (df_services_['Классификатор_услуги'] == i), 'id_услуги'].values.reshape(-1, )[0])
     return kr
