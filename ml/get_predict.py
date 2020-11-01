@@ -6,7 +6,7 @@ from data import models
 from scipy.sparse import csc_matrix
 from sklearn.metrics.pairwise import cosine_distances
 import numpy as np
-
+import datetime as dt
 from hahaton.settings import BASE_DIR
 
 ratings = None
@@ -70,32 +70,26 @@ def get_top_books(reader_id, n_books=30):
     return np.argsort((m2.T * w).T.sum(axis=0))[::-1][:n_books]
 
 
-def get_top_events(user_id: int):
-    return [31776,
-            31782,
-            31820,
-            31868,
-            31870,
-            31874,
-            31880,
-            31882,
-            31897,
-            31911,
-            31958,
-            31965,
-            31966,
-            31967,
-            31968,
-            32004,
-            32010,
-            32019,
-            32029,
-            32030,
-            32033,
-            32038,
-            32040,
-            32043,
-            ]
+events = pd.DataFrame(
+    models.Event.objects.filter(start_date__isnull=False).values_list('id', 'age_group_ceil', 'start_date', named=True))
+
+
+def get_top_events(age: int, n=10):
+    f_events = events[events.start_date > dt.date.today()]
+    np.random.seed(age)
+    if age < 12:
+        res = np.random.choice(f_events[(f_events.age_group_ceil >= 0) & (f_events.age_group_ceil < 18)]['id'], n,
+                               replace=False)
+    elif age < 18:
+        res = np.random.choice(f_events[(f_events.age_group_ceil >= 0) & (f_events.age_group_ceil < 40)]['id'], n,
+                               replace=False)
+    elif age < 50:
+        res = np.random.choice(f_events[(f_events.age_group_ceil >= 18) & (f_events.age_group_ceil < 999)]['id'], n,
+                               replace=False)
+    else:
+        res = np.random.choice(f_events[(f_events.age_group_ceil >= 55) & (f_events.age_group_ceil < 999)]['id'], n,
+                               replace=False)
+    return res
 
 
 service_df = pd.read_csv(os.path.join(BASE_DIR, 'ml', 'service_df.csv'))

@@ -18,7 +18,7 @@ instance.interceptors.response.use((r: any) => {
   return r
 }, (err: any) => {
   console.log(API_URI)
-  let errText = err?.data?.error || err.toString()
+  let errText = err?.response?.data?.error || err.toString()
   SnackbarStore.setSnackbarError(errText);
   return Promise.reject(err);
 })

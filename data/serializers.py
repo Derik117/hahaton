@@ -20,7 +20,7 @@ class PredictSerializer(serializers.ModelSerializer):
 
     @staticmethod
     def get_events(user: models.Reader):
-        event_ids = get_predict.get_top_events(user.id if user else None)
+        event_ids = get_predict.get_top_events(int(user.age) if user else 34)
         events = models.Event.objects.filter(id__in=event_ids)
         return EventSerializer(events, many=True).data
 
