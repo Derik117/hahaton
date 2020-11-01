@@ -14,9 +14,8 @@ m = None
 id_to_book = None
 reader_to_id = None
 
-
 def load_ratings():
-    global ratings, m, id_to_book, reader_to_id
+    global ratings, m
     if os.getenv('TEST'):
         limit = 100000
     else:
@@ -24,19 +23,9 @@ def load_ratings():
     if ratings is None:
         print('loading')
         ratings = pd.DataFrame(models.MlRating.objects.values_list(named=True)[:limit])
-        ratings['count'] = 1
-        ratings = ratings.groupby(['reader_id', 'doc_id'])['count'].count().reset_index().sort_values('count',
-                                                                                                      ascending=False)
-
-        book_to_id = {y: x for x, y in enumerate(ratings['doc_id'].sort_values().unique())}
-        id_to_book = {y: x for x, y in book_to_id.items()}
-        reader_to_id = {y: x for x, y in enumerate(ratings['reader_id'].sort_values().unique())}
-        ratings['doc_id'] = ratings['doc_id'].map(book_to_id)
-        ratings['reader_id'] = ratings['reader_id'].map(reader_to_id)
-        m = csc_matrix((ratings['count'], (ratings['reader_id'].astype(int).values,
-                                           ratings['doc_id'].astype(int).values)))
+        m = csc_matrix(([1] * len(ratings), (ratings['reader_id'].astype(int).values,
+                                             ratings['doc_id'].astype(int).values)))
         print('loading complete')
-
 
 load_ratings()
 
